@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV.BTVV - Redesign v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&family=Libre+Barcode+39&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --mix-blend: difference;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(0, 0, 0, 0.05);
+            --mix-blend: normal;
+        }
+
+        /* GPU Acceleration and Smoothness */
+        .reveal, .vhs-container, .vhs-spine img, .gaming-nexus {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            will-change: transform, opacity;
+            transform: translateZ(0);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: pan-y;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Desktop Only Cursor */
+        @media (min-width: 1025px) {
+            body { cursor: none !important; }
+            #custom-cursor { display: block; }
+        }
+        @media (max-width: 1024px) {
+            body { cursor: auto !important; }
+            #custom-cursor { display: none !important; }
+        }
+
+        img {
+            pointer-events: auto; /* Enable pointer events on images */
+            -webkit-user-drag: none;
+        }
+
+        /* Neon Red Custom Cursor */
+        #custom-cursor {
+            width: 10px;
+            height: 10px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
+            transition: transform 0.08s ease-out, background-color 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: translate(-50%, -50%);
+        }
+
+        #custom-cursor.white-cursor {
+            background-color: #ffffff !important;
+            box-shadow: 0 0 15px #ffffff, 0 0 30px #ffffff !important;
+        }
+
+        /* Tappable Feedback Styles */
+        a, button, .vhs-spine, .footer-link-item, #theme-toggle, i {
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+        }
+        @media (min-width: 1025px) {
+            a, button, .vhs-spine, .footer-link-item, #theme-toggle, i {
+                cursor: none !important;
+            }
+        }
+
+        a:hover, button:hover, .footer-link-item:hover {
+            color: #ff0000 !important;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+            transform: translateX(5px);
+        }
+
+        a:active, button:active, .footer-link-item:active {
+            transform: scale(0.95) translateX(5px);
+            opacity: 0.7;
+        }
+
+        /* Bracket Effect for Tappable Options */
+        .tappable-option::before, .tappable-option::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 100%;
+            border: 1px solid #ff0000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            top: 0;
+        }
+
+        .tappable-option::before { left: -10px; border-right: none; }
+        .tappable-option::after { right: -10px; border-left: none; }
+
+        .tappable-option:hover::before, .tappable-option:hover::after {
+            width: 5px;
+            opacity: 1;
+        }
+
+        /* Hide Scrollbars Globally */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cyber-grid {
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .tactical-border {
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .tactical-border::before, .tactical-border::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-color: var(--text-color);
+            border-style: solid;
+        }
+        .tactical-border-tl::before { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+        .tactical-border-tr::after { top: -2px; right: -2px; border-width: 2px 2px 0 0; }
+        .tactical-border-bl::before { bottom: -2px; left: -2px; border-width: 0 0 2px 2px; }
+        .tactical-border-br::after { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+
+        .barcode {
+            font-family: 'Libre Barcode 39', cursive;
+            font-size: 2rem;
+        }
+
+        .vhs-spine {
+            width: 40px;
+            height: 400px;
+            transition: width 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
+                        transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            filter: grayscale(0.5);
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            will-change: width, transform;
+            flex-shrink: 0;
+            contain: content; /* Improve rendering performance */
+        }
+
+        .vhs-spine:hover {
+            width: 280px;
+            filter: grayscale(0);
+            opacity: 1 !important; /* Force full opacity on hover for corner images */
+            z-index: 10;
+            transform: scale(1.02) translateY(-10px);
+            box-shadow: 0 0 40px var(--glow-color, rgba(255, 0, 0, 0.4)), 
+                        inset 0 0 60px var(--glow-color, rgba(255, 0, 0, 0.2));
+            border-color: var(--glow-color, #ff0000);
+        }
+
+        .vhs-spine.selected-spine {
+            /* Keep selected state logic if needed for clicking pause */
+            width: 280px;
+            filter: grayscale(0);
+            z-index: 10;
+            transform: scale(1.02) translateY(-10px);
+            box-shadow: 0 0 60px var(--glow-color, rgba(255, 0, 0, 0.5)), 
+                        inset 0 0 80px var(--glow-color, rgba(255, 0, 0, 0.3));
+            border-color: var(--glow-color, #ff0000);
+        }
+
+        .vhs-spine img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) translateZ(0); /* Hardware acceleration */
+            min-width: 280px;
+            pointer-events: none; /* Ignore image pointer events */
+            backface-visibility: hidden; /* Render optimization */
+        }
+
+        .vhs-container {
+            display: flex;
+            gap: 10px;
+            padding: 50px 0;
+            margin: 0;
+            overflow-x: auto;
+            justify-content: center; /* Center images on PC */
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            transform: translateZ(0);
+            scroll-behavior: smooth;
+            contain: layout;
+            will-change: scroll-position;
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
+        
+        /* Remove mask when interacting with the container to ensure hovered items are fully visible */
+        .vhs-container:hover {
+            mask-image: none;
+            -webkit-mask-image: none;
+        }
+
+        @media (max-width: 1024px) {
+            .vhs-container {
+                scroll-snap-type: x mandatory;
+                padding: 40px 0;
+                justify-content: flex-start !important;
+                /* Optimize mobile rendering */
+                will-change: scroll-position;
+                -webkit-overflow-scrolling: touch;
+            }
+            .vhs-spine {
+                scroll-snap-align: center;
+                flex: 0 0 70px; /* Slightly wider default */
+                height: 350px; /* More consistent height */
+                transition: flex 0.6s cubic-bezier(0.23, 1, 0.32, 1), 
+                            transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+                            filter 0.6s ease, 
+                            box-shadow 0.6s ease;
+                will-change: flex, transform;
+            }
+            .vhs-spine.active-mobile {
+                flex: 0 0 260px; /* Wider active state */
+                box-shadow: 0 0 40px var(--glow-color, rgba(255,0,0,0.6)),
+                            inset 0 0 20px var(--glow-color, rgba(255,0,0,0.3));
+                border-color: var(--glow-color, #ff0000);
+                filter: grayscale(0);
+                transform: scale(1.05);
+                z-index: 10;
+            }
+        }
+
+        .hero-title {
+            font-size: 10vw;
+            line-height: 0.8;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+        }
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 15vw; }
+            .maeng-outline { font-size: 18vw; }
+        }
+
+        .tech-label {
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-color);
+            opacity: 0.4;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+
+        .bg-screen1 {
+            background-image: url('screen1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+        }
+
+        .split-text-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .split-text-top {
+            overflow: visible; /* Changed from hidden to prevent clipping */
+            height: 0.55em; /* Increased from 0.5em */
+            display: block;
+            padding: 0.1em 0.1em 0 0.1em; /* Added top padding */
+        }
+
+        .split-text-bottom {
+            overflow: visible; /* Changed from hidden to prevent clipping */
+            height: 0.55em; /* Increased from 0.5em */
+            display: flex;
+            align-items: flex-end;
+            padding: 0 1.5cm 0.1em 1.5cm; /* Added bottom padding and indented */
+            justify-content: center;
+        }
+
+        /* Video Popup Styles */
+        #video-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(0px);
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1), 
+                        backdrop-filter 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+                        transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: scale(0.85) translateY(20px);
+            pointer-events: none;
+        }
+
+        #video-modal.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            backdrop-filter: blur(20px);
+            pointer-events: auto;
+        }
+
+        .video-container-wrapper {
+            width: 90%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .video-container {
+            width: 100%;
+            position: relative;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            background: black;
+        }
+
+        #popup-video {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: none;
+        }
+
+        .video-instructions {
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: white;
+            opacity: 0.4;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        #unmute-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: none;
+            transition: all 0.3s ease;
+        }
+
+        #unmute-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: white;
+        }
+
+        .image-strip {
+            height: 25vw;
+            margin: -0.05em 0;
+            display: flex;
+            gap: 1vw;
+            overflow: hidden;
+            z-index: 5;
+            position: relative;
+        }
+        @media (min-width: 768px) {
+            .image-strip {
+                height: 12vw;
+            }
+        }
+
+        /* Lab Section Styles Removed */
+        
+        #theme-toggle {
+            transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1), transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Redesign Improvements */
+        .maeng-outline {
+            font-family: 'Orbitron', sans-serif;
+            color: transparent;
+            -webkit-text-stroke: 2px var(--text-color);
+            transition: all 0.5s ease;
+        }
+
+        .maeng-outline:hover {
+            color: var(--text-color);
+            -webkit-text-stroke: 2px transparent;
+        }
+
+        .gaming-section {
+            background-color: #ff0000;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: 12vw;
+            line-height: 0.75;
+            letter-spacing: -0.06em;
+        }
+
+        .gaming-nexus {
+            font-size: 25vw;
+            letter-spacing: -0.08em;
+            opacity: 0.15;
+            filter: blur(2px);
+        }
+
+        .gaming-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .gaming-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* Minimalist Footer Styles */
+        .footer-minimalist {
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-modal-card {
+            background-color: var(--bg-color);
+            width: 100%;
+            max-width: 1200px;
+            border-radius: 60px;
+            padding: 100px 40px;
+            text-align: center;
+            position: relative;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Theme Toggle Button Removed from Floating */
+        .theme-btn-header {
+            background: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            border: none;
+            transition: transform 0.2s ease;
+        }
+        .theme-btn-header:hover {
+            transform: rotate(15deg) scale(1.1);
+        }
+        /* Scroll Reveal Base - Optimized for speed */
+        /* Smooth Scroll for Mouse/Touchpad */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1), 
+                        opacity 1s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: transform, opacity;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1), 
+                        opacity 1s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: transform, opacity;
+        }
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1), 
+                        opacity 1s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: transform, opacity;
+        }
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .reveal-zoom {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1), 
+                        opacity 1s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: transform, opacity;
+        }
+        .reveal-zoom.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .expandable-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease, margin 0.5s ease;
+            opacity: 0;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            line-height: 1.6;
+            margin-top: 0;
+            color: var(--text-color);
+            opacity: 0.4;
+        }
+
+        .expandable-content.active {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 15px;
+        }
+
+        .footer-link-item {
+            /* Handled by general tappable rule */
+        }
+
+        .chill-guy-box {
+            transition: all 0.3s ease;
+        }
+
+        .chill-guy-box:hover {
+            background-color: #ff0000 !important;
+            color: #ffffff !important;
+        }
+
+        .profile-img-container {
+            /* perspective: 1000px; */
+        }
+
+        .profile-img-normal {
+            filter: grayscale(1);
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .group:hover .profile-img-normal {
+            transform: scale(1.02);
+            filter: grayscale(0);
+        }
+
+        /* Tutiya Flip Effect */
+        .tutiya-card {
+            perspective: 1000px;
+            cursor: none;
+        }
+
+        .tutiya-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+        }
+
+        .tutiya-card.flipped .tutiya-inner {
+            transform: rotateY(180deg);
+        }
+
+        .tutiya-front, .tutiya-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tutiya-back {
+            transform: rotateY(180deg);
+            background: #ff0000;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .tutiya-front {
+            border: 2px solid var(--text-color);
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+    </style>
+</head>
+<body>
+    <div id="custom-cursor"></div>
+
+    <!-- Top Navigation -->
+    <header id="main-header" class="fixed top-0 left-0 w-full p-6 md:p-12 flex justify-between items-center z-50 transition-all duration-500" style="mix-blend-mode: var(--mix-blend);">
+        <div class="text-2xl font-black tracking-tighter uppercase">AV.BTVV</div>
+        <div id="header-options" class="flex gap-12 items-center transition-all duration-500">
+            <button id="theme-toggle" class="theme-btn-header tappable-option" aria-label="Toggle Theme">
+                <i data-lucide="sun-medium" class="w-8 h-8 hidden" id="sun-icon"></i>
+                <i data-lucide="moon-star" class="w-8 h-8 hidden" id="moon-icon"></i>
+                <i data-lucide="monitor" class="w-8 h-8" id="system-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Section 1: Split Typography Hero (Image 4 Style) -->
+        <section class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4 py-32 reveal-zoom" style="background-color: #000000; color: #ffffff;">
+            <div class="absolute inset-0 z-0 bg-screen1 scale-110 opacity-40"></div>
+            
+            <div class="relative z-10 text-center">
+                <p class="text-[10px] tracking-[0.8em] uppercase opacity-40 mb-12 mono-font reveal">Collection Vol.2</p>
+                
+                <div class="hero-title split-text-container reveal">
+                    <span class="split-text-top">AV.BTVV</span>
+                    <div class="image-strip grayscale hover:grayscale-0 transition-all duration-1000">
+                        <img src="web2.b4.jpg" alt="Left Image" class="w-1/4 h-full object-cover rounded-sm">
+                        <img src="web2.b3.jpg" alt="Center Image" class="w-1/2 h-full object-cover rounded-sm">
+                        <img src="web2.b5.jpg" alt="Right Image" class="w-1/4 h-full object-cover rounded-sm">
+                    </div>
+                    <span class="split-text-bottom">ANUBHAV</span>
+                </div>
+            </div>
+
+            <!-- Side Labels (Image 1 Style) -->
+            <div class="absolute left-12 bottom-12 hidden md:block reveal-left">
+                <div class="tech-label vertical-text opacity-30">SYSTEM // OLD SCHOOL</div>
+            </div>
+            <div class="absolute right-12 bottom-12 hidden md:block reveal-right">
+                <div class="tech-label opacity-40 flex flex-col items-end">
+                    <span class="text-[8px] tracking-[0.6em]">'R' for refresh // 'F' for full screen</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: VHS Archive Carousel (Image 2 Style) -->
+        <section class="py-32 border-t reveal" style="background-color: var(--bg-color); color: var(--text-color); border-color: var(--border-color);"> <!-- Fixed theme consistency and border -->
+            <div class="px-8 md:px-24 mb-16">
+                <div class="reveal-left">
+                    <div class="tech-label mb-4">Gallery // AV</div>
+                    <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tighter italic">Collection</h2>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <div id="vhs-archive" class="vhs-container reveal">
+                    <!-- Dynamic content loaded from script -->
+                </div>
+            </div>
+
+            <div class="mt-16 text-center reveal">
+                <p class="text-sm font-black uppercase tracking-widest opacity-40 mono-font">RANDOM CAPTURES</p>
+                <p class="text-[10px] opacity-20 uppercase tracking-widest mt-3 mono-font">CAMERA // 0010</p>
+            </div>
+        </section>
+
+        <!-- Section 3: Profile/Stats (Image 5 Style) -->
+        <section class="py-32 px-8 md:px-24">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-24 items-start">
+                <div class="md:col-span-5 relative group reveal-left profile-img-container">
+                    <div class="absolute -inset-8 bg-[var(--text-color)]/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <img src="web2.b2.jpg" alt="Maeng Profile" class="tappable-option w-full aspect-[4/5] object-cover rounded-[60px] relative z-10 border border-[var(--border-color)] profile-img-normal transition-all duration-1000">
+                    <div id="play-video-trigger" class="absolute bottom-12 left-12 z-20 glass-card p-8 flex items-center gap-8 tappable-option">
+                        <div class="w-20 h-20 rounded-full bg-[var(--text-color)]/10 flex items-center justify-center">
+                            <i data-lucide="play" class="w-8 h-8 fill-[var(--text-color)]"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] opacity-40 uppercase tracking-[0.4em] mono-font mb-2">Live Now</p>
+                            <p class="text-2xl font-black tracking-tighter uppercase italic">AV G.O.A.T</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-7 flex flex-col justify-center h-full gap-16 reveal-right">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[var(--border-color)] pb-12 gap-8">
+                        <div>
+                            <h2 class="text-8xl md:text-9xl font-black tracking-tighter uppercase italic leading-none maeng-outline">AV</h2>
+                            <p class="text-xs opacity-30 uppercase tracking-[0.4em] mono-font mt-4">ANUBHAV KUMAR SINGH</p>
+                        </div>
+                        <div class="flex gap-6">
+                            <i data-lucide="twitter" class="w-6 h-6 opacity-30 hover:opacity-100 cursor-none"></i>
+                            <i data-lucide="facebook" class="w-6 h-6 opacity-30 hover:opacity-100 cursor-none"></i>
+                            <i data-lucide="instagram" class="w-6 h-6 opacity-30 hover:opacity-100 cursor-none"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                        <div class="tactical-border tactical-border-tl tactical-border-tr tactical-border-bl tactical-border-br p-10 flex flex-col justify-between h-48 group hover:bg-[var(--text-color)]/5 transition-colors reveal">
+                            <p class="tech-label group-hover:text-[#ff0000] transition-colors">GREATNESS</p>
+                            <p class="text-6xl font-black tracking-tighter group-hover:scale-105 group-hover:text-[#ff0000] transition-all">110%</p>
+                        </div>
+                        <div class="tactical-border tactical-border-tl tactical-border-tr tactical-border-bl tactical-border-br p-10 flex flex-col justify-between h-48 bg-[var(--text-color)] text-[var(--bg-color)] border-none group hover:scale-[1.02] chill-guy-box reveal">
+                            <p class="tech-label opacity-40 group-hover:text-white/60 transition-colors">Role</p>
+                            <p class="text-4xl font-black tracking-tighter uppercase italic group-hover:text-white transition-colors">CHILL GUY</p>
+                        </div>
+                        <div class="tactical-border tactical-border-tl tactical-border-tr tactical-border-bl tactical-border-br p-10 flex flex-col justify-between h-48 group hover:bg-[var(--text-color)]/5 transition-colors reveal">
+                            <p class="tech-label group-hover:text-[#ff0000] transition-colors">WORK</p>
+                            <p class="text-6xl font-black tracking-tighter group-hover:scale-105 group-hover:text-[#ff0000] transition-all">67</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Gamerlix Gaming Hero Redesign (Image 1 Style) -->
+        <section id="gaming-section" class="min-h-screen gaming-section flex flex-col justify-between reveal">
+            <!-- Top Bar -->
+            <header class="p-8 md:p-12 md:px-24 z-30 reveal">
+                <ul class="hidden md:flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">
+                    <li class="tappable-option hover:opacity-100 transition-opacity cursor-none" onclick="toggleExpand(this)">
+                        ABOUT
+                        <div class="expandable-content">WASSUP !! HERE IS NOTHING ABOUT ME.</div>
+                    </li>
+                    <li class="tappable-option hover:opacity-100 transition-opacity cursor-none" onclick="toggleExpand(this)">
+                        JOB
+                        <div class="expandable-content">WTF !! WHO'S GONNA HIRE ME ?</div>
+                    </li>
+                    <li class="tappable-option hover:opacity-100 transition-opacity cursor-none" onclick="toggleExpand(this)">
+                        HOBBIES
+                        <div class="expandable-content">I'M SUCH A BUSY GUY,MAN. MY ONLY JOB IS MY HOBBY.</div>
+                    </li>
+                </ul>
+            </header>
+
+            <!-- Main Hero -->
+            <div class="relative flex-grow flex items-center justify-center overflow-hidden reveal-zoom">
+                <div class="gaming-nexus select-none pointer-events-none">LEGEND</div>
+                
+                <!-- Character Image -->
+                <div class="absolute inset-0 flex items-center justify-center z-10">
+                    <img src="web2.b1.png" alt="Gaming Subject" class="h-full object-contain filter drop-shadow-2xl">
+                </div>
+
+                <div class="absolute right-24 top-1/2 -translate-y-1/2 text-right hidden md:block reveal-right">
+                    <p class="text-xl font-black italic tracking-tighter opacity-50">GUY</p>
+                </div>
+                <div class="absolute left-24 bottom-32 hidden md:block reveal-left">
+                    <p class="text-xl font-black italic tracking-tighter opacity-50 uppercase">COOL</p>
+                </div>
+            </div>
+
+            <!-- Bottom Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-1 z-20 reveal">
+                <div class="gaming-card">
+                    <h4 class="text-xs font-black uppercase mb-2 tracking-widest">ANY GIRLFRIEND</h4>
+                    <p class="text-[10px] opacity-70 leading-relaxed uppercase font-bold">WHY U WANNA KNOW ABOUT IT..</p>
+                </div>
+                <div class="gaming-card">
+                    <h4 class="text-xs font-black uppercase mb-2 tracking-widest">SOCIAL MEDIA</h4>
+                    <p class="text-[10px] opacity-70 leading-relaxed uppercase font-bold">GANGSTER PEOPLE DONT EVEN USE SMART PHONES..</p>
+                </div>
+                <div class="gaming-card">
+                    <h4 class="text-xs font-black uppercase mb-2 tracking-widest">EMOTIONS</h4>
+                    <p class="text-[10px] opacity-70 leading-relaxed uppercase font-bold">HAHAHA !!! EMOTIONS,,</p>
+                </div>
+                <div class="gaming-card flex flex-col items-center justify-center bg-transparent border-none gap-4">
+                    <p id="tutiya-instruction" class="text-[10px] opacity-40 uppercase tracking-[0.4em] mono-font animate-pulse">Tap</p>
+                    <div id="tutiya-trigger" class="tutiya-card w-48 h-16 tappable-option">
+                        <div class="tutiya-inner">
+                            <div class="tutiya-front">
+                                <span class="text-sm font-black tracking-[0.5em] uppercase">TUTIYA</span>
+                            </div>
+                            <div class="tutiya-back">
+                                <span class="text-sm font-black tracking-[0.2em] uppercase">Thats You</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Restoration -->
+        <footer class="py-32 px-8 md:px-24 border-t reveal" style="background-color: var(--bg-color); color: var(--text-color); border-color: var(--border-color);"> <!-- Fixed theme consistency and border -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-20">
+                <div class="col-span-1 reveal-left">
+                    <div class="flex items-center gap-4 mb-10">
+                        <span class="text-2xl font-black tracking-tighter uppercase">AV.BTVV</span>
+                    </div>
+                    <p class="opacity-20 text-xs leading-relaxed mono-font uppercase tracking-widest">
+                        JUST A // WEBSITE<br>
+                        DESIGNED FOR THE NEXT GENERATION.
+                    </p>
+                </div>
+                <div class="reveal">
+                    <h4 class="tech-label mb-10 opacity-100">COMPANY</h4>
+                    <ul class="flex flex-col gap-5 text-xs font-bold uppercase tracking-[0.2em] opacity-30 mono-font">
+                        <li class="footer-link-item tappable-option hover:opacity-100 transition-opacity" onclick="toggleExpand(this)">
+                            ABOUT
+                            <div class="expandable-content">THIS WEBSITE IS JUST DEVELOPED FOR TESTING AND RESEARCH.</div>
+                        </li>
+                        <li class="footer-link-item tappable-option hover:opacity-100 transition-opacity" onclick="toggleExpand(this)">
+                            DEVELOPER
+                            <div class="expandable-content">THIS WEBSITE IS DEVELOPED BY AV WORKS LAB. AV.BTVV IS DEVELOPED AND MAINTAINED BY AV WORKS LAB.</div>
+                        </li>
+                        <li class="footer-link-item tappable-option hover:opacity-100 transition-opacity" onclick="toggleExpand(this)">
+                            WEBSITE
+                            <div class="expandable-content">NOT CONFIRMED YET.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="reveal">
+                    <h4 class="tech-label mb-10 opacity-100">SUPPORT</h4>
+                    <ul class="flex flex-col gap-5 text-xs font-bold uppercase tracking-[0.2em] opacity-30 mono-font">
+                        <li class="footer-link-item tappable-option hover:opacity-100 transition-opacity" onclick="toggleExpand(this)">
+                            CONTACK
+                            <div class="expandable-content">NO INFO YET.</div>
+                        </li>
+                        <li class="footer-link-item tappable-option hover:opacity-100 transition-opacity" onclick="toggleExpand(this)">
+                            REPORT
+                            <div class="expandable-content">REPORT IF ANY SCAM / ISSUE / GLITCHED IS HAPPEND WITH YOU IN OUR WEBSITE(S)</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-32 pt-12 border-t border-[var(--border-color)] flex flex-col md:flex-row justify-between items-center gap-12 opacity-10 text-[10px] font-bold tracking-[0.4em] uppercase mono-font reveal">
+                <p>© 2026 AV.BTVV. ALL RIGHTS RESERVED.</p>
+                <div class="flex gap-12">
+                    <span>BETA // VERSION</span>
+                    <span>UPDATED // MARCH 2026</span>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Video Modal -->
+    <div id="video-modal">
+        <div class="video-container-wrapper">
+            <div class="video-container tappable-option">
+                <video id="popup-video" playsinline>
+                    <source src="vid.pop.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-controls">
+                    <button id="unmute-btn" class="tappable-option" aria-label="Unmute">
+                        <i data-lucide="volume-x" id="mute-icon" class="w-6 h-6"></i>
+                        <i data-lucide="volume-2" id="unmute-icon" class="w-6 h-6 hidden"></i>
+                    </button>
+                </div>
+            </div>
+            <p class="video-instructions">
+                SPACEBAR: MUTE/UNMUTE // DOUBLE SPACEBAR: PLAY/PAUSE // TAP: PLAY/PAUSE
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const isMobile = window.innerWidth <= 1024 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        lucide.createIcons();
+
+        // Video Modal Logic
+        const videoModal = document.getElementById('video-modal');
+        const popupVideo = document.getElementById('popup-video');
+        const playVideoTrigger = document.getElementById('play-video-trigger');
+        const unmuteBtn = document.getElementById('unmute-btn');
+        const muteIcon = document.getElementById('mute-icon');
+        const unmuteIcon = document.getElementById('unmute-icon');
+        const videoContainer = document.querySelector('.video-container');
+
+        let spacePressTimer = null;
+        let spacePressCount = 0;
+
+        function openVideo() {
+            videoModal.classList.add('active');
+            popupVideo.muted = true;
+            popupVideo.currentTime = 0;
+            popupVideo.play().catch(err => console.log("Autoplay blocked:", err));
+            
+            if (isMobile && navigator.vibrate) navigator.vibrate(20);
+        }
+
+        function closeVideo() {
+            if (!videoModal.classList.contains('active')) return;
+            videoModal.classList.remove('active');
+            popupVideo.pause();
+            
+            // Keep current frame for 5 seconds, then reset to default
+             setTimeout(() => {
+                 if (!videoModal.classList.contains('active')) {
+                     popupVideo.currentTime = 0;
+                     popupVideo.muted = true;
+                     muteIcon.classList.remove('hidden');
+                     unmuteIcon.classList.add('hidden');
+                 }
+             }, 5000);
+        }
+
+        function togglePlayPause() {
+            if (popupVideo.paused) {
+                popupVideo.play();
+            } else {
+                popupVideo.pause();
+            }
+            if (isMobile && navigator.vibrate) navigator.vibrate(10);
+        }
+
+        function toggleMute() {
+            popupVideo.muted = !popupVideo.muted;
+            if (popupVideo.muted) {
+                muteIcon.classList.remove('hidden');
+                unmuteIcon.classList.add('hidden');
+            } else {
+                muteIcon.classList.add('hidden');
+                unmuteIcon.classList.remove('hidden');
+            }
+            if (isMobile && navigator.vibrate) navigator.vibrate(10);
+        }
+
+        playVideoTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openVideo();
+        });
+
+        unmuteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMute();
+        });
+
+        // Click on video to play/pause
+        videoContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePlayPause();
+        });
+
+        // Keyboard Controls
+        document.addEventListener('keydown', (e) => {
+            // Global shortcuts
+            if (e.key.toLowerCase() === 'r') {
+                 window.location.reload();
+             }
+
+             if (e.key.toLowerCase() === 'f') {
+                 if (!document.fullscreenElement) {
+                     document.documentElement.requestFullscreen().catch(err => {
+                         console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                     });
+                 } else {
+                     if (document.exitFullscreen) {
+                         document.exitFullscreen();
+                     }
+                 }
+             }
+
+            if (!videoModal.classList.contains('active')) return;
+
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent page scroll
+                spacePressCount++;
+                
+                if (spacePressTimer) clearTimeout(spacePressTimer);
+
+                spacePressTimer = setTimeout(() => {
+                    if (spacePressCount === 1) {
+                        // Single tap: Mute/Unmute
+                        toggleMute();
+                    } else if (spacePressCount >= 2) {
+                        // Double tap: Play/Pause
+                        togglePlayPause();
+                    }
+                    spacePressCount = 0;
+                    spacePressTimer = null;
+                }, 250); // 250ms window for double tap
+            }
+        });
+
+        // Close video on scroll
+        window.addEventListener('scroll', () => {
+            if (videoModal.classList.contains('active')) {
+                closeVideo();
+            }
+        }, { passive: true });
+
+        // Close on background click
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal || e.target.classList.contains('video-container-wrapper')) {
+                closeVideo();
+            }
+        });
+
+        popupVideo.onended = () => {
+            console.log("Video ended.");
+        };
+
+        // Tutiya Trigger Logic
+        const tutiyaTrigger = document.getElementById('tutiya-trigger');
+        const tutiyaInstruction = document.getElementById('tutiya-instruction');
+        const tutiyaSound = new Audio('faaah.mp3');
+
+        tutiyaTrigger.addEventListener('click', () => {
+            tutiyaTrigger.classList.add('flipped');
+            if (tutiyaInstruction) tutiyaInstruction.style.display = 'none';
+            
+            // Play sound effect
+            tutiyaSound.currentTime = 0;
+            tutiyaSound.play().catch(err => console.log("Sound play blocked:", err));
+
+            if (isMobile && navigator.vibrate) navigator.vibrate(15);
+        });
+
+        // Reset Tutiya on scroll exit or section leave
+        const gamingSection = document.getElementById('gaming-section');
+        const observerGaming = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    tutiyaTrigger.classList.remove('flipped');
+                }
+            });
+        }, { threshold: 0.1 });
+        observerGaming.observe(gamingSection);
+
+        // Theme Management Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const moonIcon = document.getElementById('moon-icon');
+        const sunIcon = document.getElementById('sun-icon');
+        const systemIcon = document.getElementById('system-icon');
+        
+        // Cycle: System -> Light -> Dark
+        let themeIndex = localStorage.getItem('themeIndex') ? parseInt(localStorage.getItem('themeIndex')) : 0;
+        const themes = ['system', 'light', 'dark'];
+
+        function applyTheme() {
+            const currentTheme = themes[themeIndex];
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Hide all icons first
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.add('hidden');
+            systemIcon.classList.add('hidden');
+
+            if (currentTheme === 'system') {
+                document.documentElement.setAttribute('data-theme', systemPrefersDark ? 'dark' : 'light');
+                systemIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                if (currentTheme === 'light') sunIcon.classList.remove('hidden');
+                if (currentTheme === 'dark') moonIcon.classList.remove('hidden');
+            }
+
+            localStorage.setItem('themeIndex', themeIndex);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            themeIndex = (themeIndex + 1) % themes.length;
+            applyTheme();
+        });
+
+        // Watch for system theme changes if in system mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (themes[themeIndex] === 'system') applyTheme();
+        });
+
+        // Initialize theme
+        applyTheme();
+
+        // Simulated Backend: Archive Data with Adaptive Colors
+        const archiveData = [
+            { id: 1, src: "web2.1.jpeg", alt: "Project 01", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 2, src: "web2.2.jpeg", alt: "Project 02", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 3, src: "web2.3.jpg", alt: "Project 03", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 4, src: "web2.4.jpg", alt: "Project 04", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 5, src: "web2.5.jpg", alt: "Project 05", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 6, src: "web2.6.jpg", alt: "Project 06", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 7, src: "web2.7.jpg", alt: "Project 07", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 8, src: "web2.8.jpg", alt: "Project 08", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 9, src: "web2.9.jpg", alt: "Project 09", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 10, src: "web2.10.jpg", alt: "Project 10", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 11, src: "web2.11.jpg", alt: "Project 11", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 12, src: "web2.12.jpg", alt: "Project 12", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 13, src: "web2.13.jpg", alt: "Project 13", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 14, src: "web2.14.jpg", alt: "Project 14", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 15, src: "web2.1.jpeg", alt: "Project 15", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 16, src: "web2.2.jpeg", alt: "Project 16", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 17, src: "web2.3.jpg", alt: "Project 17", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 18, src: "web2.4.jpg", alt: "Project 18", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 19, src: "web2.5.jpg", alt: "Project 19", color: "rgba(255, 0, 0, 0.5)" },
+            { id: 20, src: "web2.6.jpg", alt: "Project 20", color: "rgba(255, 0, 0, 0.5)" }
+        ];
+
+        let isAutoScrolling = false; // Disabled scrolling
+        let autoScrollInterval;
+
+        function loadArchive() {
+            const container = document.getElementById('vhs-archive');
+            let content = '';
+            
+            // Add 3 from the end to the beginning (corner images)
+            const endItems = [
+                archiveData[archiveData.length - 3], 
+                archiveData[archiveData.length - 2], 
+                archiveData[archiveData.length - 1]
+            ];
+            endItems.forEach(item => {
+                content += `
+                    <div class="vhs-spine opacity-50" data-id="${item.id}" style="--glow-color: ${item.color}">
+                        <img src="${item.src}" alt="${item.alt}" loading="lazy">
+                    </div>
+                `;
+            });
+
+            // Main items
+            archiveData.forEach(item => {
+                content += `
+                    <div class="vhs-spine" data-id="${item.id}" style="--glow-color: ${item.color}">
+                        <img src="${item.src}" alt="${item.alt}" loading="lazy">
+                    </div>
+                `;
+            });
+
+            // Add 3 from the start to the end (corner images)
+            const startItems = [
+                archiveData[0], 
+                archiveData[1], 
+                archiveData[2]
+            ];
+            startItems.forEach(item => {
+                content += `
+                    <div class="vhs-spine opacity-50" data-id="${item.id}" style="--glow-color: ${item.color}">
+                        <img src="${item.src}" alt="${item.alt}" loading="lazy">
+                    </div>
+                `;
+            });
+
+            container.innerHTML = content;
+            
+            // Re-bind cursor effects for elements (Desktop only)
+            if (!isMobile) {
+                document.querySelectorAll('.vhs-spine').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        cursor.style.transform += ' scale(1.5)';
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        cursor.style.transform = cursor.style.transform.replace(' scale(1.5)', '');
+                    });
+                });
+            }
+        }
+
+        function startAutoScroll() {
+            // Disabled
+        }
+
+        // Custom Cursor Logic
+        const cursor = document.getElementById('custom-cursor');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+        });
+
+        // Hover effects for general elements
+        document.querySelectorAll('a, button, .footer-link-item').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.style.transform += ' scale(1.5)');
+            el.addEventListener('mouseleave', () => cursor.style.transform = cursor.style.transform.replace(' scale(1.5)', ''));
+        });
+
+        // 4th screen white cursor logic
+        const gamingSec = document.getElementById('gaming-section');
+        gamingSec.addEventListener('mouseenter', () => cursor.classList.add('white-cursor'));
+        gamingSec.addEventListener('mouseleave', () => cursor.classList.remove('white-cursor'));
+
+        // Fullscreen script on interaction
+        document.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            }
+        }, { once: true });
+
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('button, a, .vhs-spine');
+            if (target) {
+                if (target.tagName === 'A') {
+                    e.preventDefault();
+                } else if (target.classList.contains('vhs-spine')) {
+                    // Haptic feedback for tap selection on mobile
+                    if (isMobile && navigator.vibrate) {
+                        navigator.vibrate(15);
+                    }
+                    // Selection logic
+                    document.querySelectorAll('.vhs-spine').forEach(s => {
+                        s.classList.remove('selected-spine');
+                        if (isMobile) s.classList.remove('active-mobile');
+                    });
+                    
+                    target.classList.add('selected-spine');
+                    
+                    if (isMobile) {
+                        target.classList.add('active-mobile');
+                        target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                        // Update lastVibratedId to prevent duplicate vibration from scroll listener
+                        lastVibratedId = target.getAttribute('data-id');
+                    }
+                }
+            }
+        });
+
+        function toggleExpand(element) {
+            const content = element.querySelector('.expandable-content');
+            if (!content) return;
+            
+            const isActive = content.classList.contains('active');
+            
+            // Haptic feedback for expanding on mobile
+            if (isMobile && !isActive && navigator.vibrate) {
+                navigator.vibrate(10);
+            }
+
+            document.querySelectorAll('.expandable-content').forEach(c => c.classList.remove('active'));
+            if (!isActive) {
+                content.classList.add('active');
+            }
+        }
+
+        // Haptic feedback for image swiping on mobile
+        let lastVibratedId = null;
+        if (isMobile) {
+            const archiveContainer = document.getElementById('vhs-archive');
+            archiveContainer.addEventListener('scroll', () => {
+                const containerRect = archiveContainer.getBoundingClientRect();
+                const centerX = containerRect.left + containerRect.width / 2;
+                
+                // Find the element closest to the center with a threshold
+                let closestEl = null;
+                let minDistance = Infinity;
+                const threshold = containerRect.width * 0.25; // Snap threshold
+                
+                document.querySelectorAll('.vhs-spine').forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    const elCenterX = rect.left + rect.width / 2;
+                    const distance = Math.abs(centerX - elCenterX);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestEl = el;
+                    }
+                });
+
+                if (closestEl && minDistance < threshold) {
+                    const currentId = closestEl.getAttribute('data-id');
+                    if (currentId !== lastVibratedId) {
+                        if (navigator.vibrate) {
+                            navigator.vibrate(10);
+                        }
+                        lastVibratedId = currentId;
+                        
+                        // Use requestAnimationFrame for smoother class updates
+                        window.requestAnimationFrame(() => {
+                            document.querySelectorAll('.vhs-spine').forEach(s => s.classList.remove('active-mobile'));
+                            closestEl.classList.add('active-mobile');
+                        });
+                    }
+                }
+            }, { passive: true });
+        }
+
+        let scrollTimeout;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        
+        window.addEventListener('scroll', () => {
+            window.requestAnimationFrame(() => {
+                const openContent = document.querySelector('.expandable-content.active');
+                if (openContent) {
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => openContent.classList.remove('active'), 2000);
+                }
+
+                if (window.scrollY > 100) {
+                    themeToggleBtn.style.opacity = '0';
+                    themeToggleBtn.style.pointerEvents = 'none';
+                } else {
+                    themeToggleBtn.style.opacity = '1';
+                    themeToggleBtn.style.pointerEvents = 'auto';
+                }
+            });
+        });
+
+        // Initialize dynamic components
+        loadArchive();
+
+        // Service Worker Registration for Offline Support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered!'))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-zoom').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
