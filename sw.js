@@ -6,7 +6,7 @@ const ASSETS_TO_CACHE = [
     'vid.pop.mp4',
     'duck.mp3',
     'web2.b1.png',
-    'web2.b2.jpg',
+    'web2.b2.jpeg',
     'web2.b3.jpg',
     'web2.b4.jpg',
     'web2.b5.jpg',
