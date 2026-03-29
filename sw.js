@@ -24,6 +24,7 @@ const ASSETS_TO_CACHE = [
     'web2.12.jpg',
     'web2.13.jpg',
     'web2.14.jpg',
+    'web2.15.jpg',
     'https://cdn.tailwindcss.com',
     'https://unpkg.com/lucide@latest',
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&family=Libre+Barcode+39&family=Orbitron:wght@900&display=swap'
