@@ -4,7 +4,7 @@ const ASSETS_TO_CACHE = [
     '/index.html',
     'screen1.jpg',
     'vid.pop.mp4',
-    'faaah.mp3',
+    'duck.mp3',
     'web2.b1.png',
     'web2.b2.jpg',
     'web2.b3.jpg',
